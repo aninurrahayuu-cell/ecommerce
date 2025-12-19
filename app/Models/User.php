@@ -58,7 +58,7 @@ class User extends Authenticatable
     //Relasi many-to-many ke products melalui wishlists.
     public function wishlistProducts()
     {
-        return $this->belongsToMany(Product::class, 'wishlists')
+        return $this->belongsToMany(homeProduct::class, 'wishlists')
                     ->withTimestamps();
     }
 
@@ -70,7 +70,7 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    // Cek apakah user adalah customer.
+    // Cek apakah user adalah custohomemer.
     public function isCustomer(): bool
     {
         return $this->role === 'customer';

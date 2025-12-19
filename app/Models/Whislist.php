@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Wishlist;
+use App\Models\Order;
 
-class Whislist extends Model
+class User extends Authenticatable
 {
-    //
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }
+

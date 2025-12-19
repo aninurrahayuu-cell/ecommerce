@@ -33,14 +33,14 @@
     {{-- ============================================
          NAVBAR
          ============================================ --}}
-    {{-- @include('partials.navbar') --}}
+    @include('partials.navbar')
 
     {{-- ============================================
          FLASH MESSAGES
          ============================================ --}}
-    {{-- <div class="container mt-3">
+    <div class="container mt-3">
         @include('partials.flash-messages')
-    </div> --}}
+    </div>
 
     {{-- ============================================
          MAIN CONTENT
@@ -52,9 +52,9 @@
     {{-- ============================================
          FOOTER
          ============================================ --}}
-    {{-- @include('partials.footer') --}}
+    @include('partials.footer')
 
-    Stack untuk JS tambahan per halaman
+    {{-- Stack untuk JS tambahan per halaman --}}
     @stack('scripts')
 </body>
 </html>
