@@ -28,7 +28,7 @@
                 <h6 class="text-white mb-3">Menu</h6>
                 <ul class="list-unstyled">
                     <li class="mb-2">
-                        <a href="{{ route('catalog.index') }}" class="text-secondary text-decoration-none">
+                        {{-- <a href="{{ route('catalog.index') }}" class="text-secondary text-decoration-none"> --}}
                             Katalog Produk
                         </a>
                     </li>

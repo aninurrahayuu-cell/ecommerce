@@ -44,10 +44,10 @@ class User extends Authenticatable
     }
 
     // User memiliki banyak item wishlist.
-    public function wishlists()
-    {
-        return $this->hasMany(Wishlist::class);
-    }
+    // public function wishlists()
+    // {
+    //     return $this->hasMany(Wishlist::class);
+    // }
 
     // User memiliki banyak pesanan.
     public function orders()
@@ -77,12 +77,12 @@ class User extends Authenticatable
     }
 
     // Cek apakah produk ada di wishlist user.
-    public function hasInWishlist(Product $product): bool
-    {
-        return $this->wishlists()
-                    ->where('product_id', $product->id)
-                    ->exists();
-    }
+    // public function hasInWishlist(Product $product): bool
+    // {
+    //     return $this->wishlists()
+    //                 ->where('product_id', $product->id)
+    //                 ->exists();
+    // }
 
     public function getAvatarUrlAttribute(): string
 {

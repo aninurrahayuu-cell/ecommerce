@@ -22,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarMain">
             {{-- Search Form --}}
             <form class="d-flex mx-auto" style="max-width: 400px; width: 100%;"
-                  action="{{ route('catalog.index') }}" method="GET">
+                  {{-- action="{{ route('catalog.index') }}" method="GET"> --}}
                 <div class="input-group">
                     <input type="text" name="q"
                            class="form-control"
@@ -38,7 +38,7 @@
             <ul class="navbar-nav ms-auto align-items-center">
                 {{-- Katalog --}}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('catalog.index') }}">
+                    {{-- <a class="nav-link" href="{{ route('catalog.index') }}"> --}}
                         <i class="bi bi-grid me-1"></i> Katalog
                     </a>
                 </li>
@@ -48,11 +48,11 @@
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="{{ route('wishlist.index') }}">
                             <i class="bi bi-heart"></i>
-                            @if(auth()->user()->wishlists()->count() > 0)
+                            {{-- @if(auth()->user()->wishlists()->count() > 0)
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
                                     {{ auth()->user()->wishlists()->count() }}
                                 </span>
-                            @endif
+                            @endif --}}
                         </a>
                     </li>
 

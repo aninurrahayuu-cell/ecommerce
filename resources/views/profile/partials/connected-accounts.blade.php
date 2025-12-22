@@ -35,7 +35,7 @@
                 </button>
             {{-- </form> --}}
         @else
-            <a href="{{ route('auth.google') }}" class="btn btn-outline-primary btn-sm">
+            {{-- <a href="{{ route('auth.google') }}" class="btn btn-outline-primary btn-sm"> --}}
                 Hubungkan
             </a>
         @endif
