@@ -133,8 +133,8 @@
                         <button type="button"
                                 onclick="toggleWishlist({{ $product->id }})"
                                 class="btn btn-outline-danger mb-4 wishlist-btn-{{ $product->id }}">
-                            <i class="bi {{ auth()->user()->hasInWishlist($product) ? 'bi-heart-fill' : 'bi-heart' }} me-2"></i>
-                            {{ auth()->user()->hasInWishlist($product) ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist' }}
+                            {{-- <i class="bi {{ auth()->user()->hasInWishlist($product) ? 'bi-heart-fill' : 'bi-heart' }} me-2"></i> --}}
+                            {{-- {{ auth()->user()->hasInWishlist($product) ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist' }} --}}
                         </button>
                     @endauth
 
