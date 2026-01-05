@@ -12,7 +12,7 @@
 
     {{-- Nama --}}
     <div class="mb-3">
-        <label for="name" class="form-label">Nama Lengkap</label>
+         <label for="name" class="form-label">Nama Lengkap</label>
         <input type="text"
                name="name"
                id="name"

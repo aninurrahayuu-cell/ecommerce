@@ -23,7 +23,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): View
     {
-        $products = Product::query()
+        $products = Product::all()
         // Eager Loading: Meload relasi kategori & gambar utama sekaligus.
         // Tanpa 'with', Laravel akan mengeksekusi 1 query tambahan untuk SETIAP baris produk (N+1 Problem).
             ->with(['category', 'primaryImage'])

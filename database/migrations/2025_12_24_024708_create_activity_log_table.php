@@ -17,6 +17,9 @@ class CreateActivityLogTable extends Migration
             $table->json('properties')->nullable();
             $table->timestamps();
             $table->index('log_name');
+            $table->string('slug')->index(); // Cepat dicari
+            $table->decimal('price')->index(); // Cepat diurutkan
+            $table->foreignId('category_id')->constrained(); // Foreign Key otomatis diindex
         });
     }
 

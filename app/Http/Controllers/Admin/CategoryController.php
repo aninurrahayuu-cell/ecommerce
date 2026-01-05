@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -19,7 +20,7 @@ class CategoryController extends Controller
         // Mengambil data kategori dengan pagination.
         // withCount('products'): Menghitung jumlah produk di setiap kategori.
         // Teknik ini jauh lebih efisien daripada memanggil $category->products->count() di view (N+1 Problem).
-        $categories = Category::withCount('products')
+        $categories = Category::all()
             ->latest() // Urutkan dari yang terbaru (created_at desc)
             ->paginate(10); // Batasi 10 item per halaman
 
@@ -118,6 +119,9 @@ class CategoryController extends Controller
         // 3. Hapus record dari database
         $category->delete();
 
+        $categories = Cache::remember('global_categories', 3600, function () {
+        return Category::withCount('products')->get(); // Sekalian Eager Load count produk
+});
         return back()->with('success', 'Kategori berhasil dihapus!');
     }
 }

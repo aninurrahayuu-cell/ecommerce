@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\OrderPaidEvent;
 use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -236,5 +237,13 @@ class MidtransNotificationController extends Controller
         }
 
         // TODO: Logic tambahan untuk refund
+    }
+
+    private function setSuccess(Order $order)
+    {
+    $order->update(['']);
+
+    // Fire & Forget
+    event(new OrderPaidEvent($order));
     }
 }
