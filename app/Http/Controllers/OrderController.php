@@ -3,8 +3,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\TransactionNotification;
+use Illuminate\Support\Facades\Notification;
+use App\Models\User;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -13,15 +17,46 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // PENTING: Jangan gunakan Order::all() !
-        // Kita hanya mengambil order milik user yg sedang login menggunakan relasi hasMany.
-        // auth()->user()->orders() akan otomatis memfilter: WHERE user_id = current_user_id
         $orders = auth()->user()->orders()
-            ->with(['items.product']) // Eager Load nested: Order -> OrderItems -> Product
-            ->latest() // Urutkan dari pesanan terbaru
+            ->with(['items.product']) 
+            ->latest() 
             ->paginate(10);
 
         return view('orders.index', compact('orders'));
+    }
+
+    /**
+     * Method baru: Menyimpan pesanan dan kirim notifikasi email.
+     * Ini dipanggil saat user klik "Checkout" atau "Bayar".
+     */
+    public function store(Request $request)
+    {
+        // Gunakan Database Transaction agar data aman
+        return DB::transaction(function () use ($request) {
+            
+            // 1. Logika Simpan Order (Contoh simpel)
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'invoice_number' => 'INV-' . strtoupper(str_random(8)),
+                'total_amount' => $request->total_amount, // pastikan data ini dikirim dari form
+                'status' => 'pending',
+            ]);
+
+            // 2. AMBIL USER ADMIN UNTUK DIKIRIM NOTIFIKASI
+            // Kita ingin memberi tahu admin bahwa ada transaksi masuk
+            $admin = User::where('role', 'admin')->first();
+
+            if ($admin) {
+                // KIRIM NOTIFIKASI KE MAILTRAP
+                $admin->notify(new TransactionNotification($order));
+            }
+
+            // Atau jika ingin kirim ke user yang baru saja belanja:
+            // auth()->user()->notify(new TransactionNotification($order));
+
+            return redirect()->route('orders.success', $order->id)
+                             ->with('success', 'Pesanan berhasil dibuat, silakan cek email!');
+        });
     }
 
     /**
@@ -29,15 +64,10 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        // 1. Authorize (Security Check)
-        // User A TIDAK BOLEH melihat pesanan User B.
-        // Kita cek apakah ID pemilik order sama dengan ID user yang login.
         if ($order->user_id !== auth()->id()) {
             abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
         }
 
-        // 2. Load relasi detail
-        // Kita butuh data items dan gambar produknya untuk ditampilkan di invoice view.
         $order->load(['items.product', 'items.product.primaryImage']);
 
         return view('orders.show', compact('order'));

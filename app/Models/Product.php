@@ -215,12 +215,10 @@ class Product extends Model
      *
      * Product::search('samsung')->get();
      */
-    public function scopeSearch($query, string $keyword)
+    public function scopeSearch($query, $search)
     {
-        return $query->where(function ($q) use ($keyword) {
-            $q->where('name', 'like', "%{$keyword}%")
-              ->orWhere('description', 'like', "%{$keyword}%");
-        });
+        return $query->where('name', 'like', "%{$search}%")
+                 ->orWhere('description', 'like', "%{$search}%");
     }
 
     // ... Scopes lainnya sama seperti sebelumnya ...

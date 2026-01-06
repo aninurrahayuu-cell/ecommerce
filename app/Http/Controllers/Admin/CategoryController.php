@@ -9,20 +9,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View; // Tambahkan ini untuk tipe data return
 
 class CategoryController extends Controller
 {
     /**
      * Menampilkan daftar kategori.
      */
-    public function index()
+    public function index(Request $request): View // PERBAIKAN: Tambahkan (Request $request)
     {
         // Mengambil data kategori dengan pagination.
-        // withCount('products'): Menghitung jumlah produk di setiap kategori.
-        // Teknik ini jauh lebih efisien daripada memanggil $category->products->count() di view (N+1 Problem).
-        $categories = Category::all()
-            ->latest() // Urutkan dari yang terbaru (created_at desc)
-            ->paginate(10); // Batasi 10 item per halaman
+        $categories = Category::query()
+            ->when($request->search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->latest() 
+            ->paginate(10) 
+            ->withQueryString();
 
         return view('admin.categories.index', compact('categories'));
     }
@@ -34,25 +37,19 @@ class CategoryController extends Controller
     {
         // 1. Validasi Input
         $validated = $request->validate([
-            // 'unique:categories': Pastikan nama belum dipakai di tabel categories
             'name' => 'required|string|max:100|unique:categories',
             'description' => 'nullable|string|max:500',
-            // Validasi file gambar (maks 1MB)
             'image' => 'nullable|image|max:1024',
             'is_active' => 'boolean',
         ]);
 
-        // 2. Handle Upload Gambar (Jika ada)
+        // 2. Handle Upload Gambar
         if ($request->hasFile('image')) {
-            // store('categories', 'public') akan menyimpan file di: storage/app/public/categories
-            // dan mengembalikan path file tersebut.
             $validated['image'] = $request->file('image')
                 ->store('categories', 'public');
         }
 
         // 3. Generate Slug Otomatis
-        // Slug digunakan untuk URL yang SEO-friendly.
-        // Contoh: "Elektronik Murah" -> "elektronik-murah"
         $validated['slug'] = Str::slug($validated['name']);
 
         // 4. Simpan ke Database
@@ -68,9 +65,6 @@ class CategoryController extends Controller
     {
         // 1. Validasi Input
         $validated = $request->validate([
-            // PENTING: Pada validasi unique saat update, kita harus mengecualikan ID kategori ini sendiri.
-            // Format: unique:table,column,except_id
-            // Jika tidak dikecualikan, Laravel akan menganggap nama ini duplikat (karena sudah ada di DB milik record ini sendiri).
             'name' => 'required|string|max:100|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|image|max:1024',
@@ -79,20 +73,17 @@ class CategoryController extends Controller
 
         // 2. Handle Ganti Gambar
         if ($request->hasFile('image')) {
-            // Hapus gambar lama dulu agar tidak menumpuk sampah file di server (Garbage Collection manual).
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
-            // Simpan gambar baru
             $validated['image'] = $request->file('image')
                 ->store('categories', 'public');
         }
 
-        // 3. Update Slug jika nama berubah
-        // Selalu update slug agar sesuai dengan nama terbaru kategori.
+        // 3. Update Slug
         $validated['slug'] = Str::slug($validated['name']);
 
-        // 4. Update data di database
+        // 4. Update data
         $category->update($validated);
 
         return back()->with('success', 'Kategori berhasil diperbarui!');
@@ -103,25 +94,23 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        // 1. Safeguard (Pencegahan)
-        // Jangan hapus kategori jika masih ada produk di dalamnya.
-        // Ini mencegah produk menjadi "yatim piatu" (orphan data) yang tidak punya kategori.
+        // 1. Safeguard
         if ($category->products()->exists()) {
             return back()->with('error',
-                'Kategori tidak dapat dihapus karena masih memiliki produk. Silahkan pindahkan atau hapus produk terlebih dahulu.');
+                'Kategori tidak dapat dihapus karena masih memiliki produk.');
         }
 
-        // 2. Hapus file gambar fisik dari storage
+        // 2. Hapus file gambar
         if ($category->image) {
             Storage::disk('public')->delete($category->image);
         }
 
-        // 3. Hapus record dari database
+        // 3. Hapus record
         $category->delete();
 
-        $categories = Cache::remember('global_categories', 3600, function () {
-        return Category::withCount('products')->get(); // Sekalian Eager Load count produk
-});
+        // Bersihkan cache jika kamu menggunakannya
+        Cache::forget('global_categories');
+
         return back()->with('success', 'Kategori berhasil dihapus!');
     }
 }
