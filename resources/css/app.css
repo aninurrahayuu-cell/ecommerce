@@ -32,10 +32,12 @@
   border-color: var(--primary-color);
 }
 
-.btn-primary:hover {
-  background-color: #4338ca;
-  border-color: #4338ca;
+
+.bg-primary {
+    --bs-bg-opacity: 1;
+    background-color: rgb(73 38 101) !important;
 }
+
 
 /* ================================================
    LAYOUT STYLES

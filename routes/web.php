@@ -27,8 +27,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Katalog Produk
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
-Route::get('/products', [CatalogController::class, 'index'])->name('catalog.index');
-Route::get('/products/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/catalog/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
 
 // ================================================
 // HALAMAN YANG BUTUH LOGIN (Customer)
@@ -92,6 +92,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Resource route untuk orders (index, show, update)
     Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class)->only(['index', 'show', 'update']);
 
+
+    // Route Profil Admin
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // ================================================
