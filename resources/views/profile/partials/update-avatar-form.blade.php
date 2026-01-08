@@ -1,10 +1,23 @@
 {{-- resources/views/profile/partials/update-avatar-form.blade.php --}}
+@if (session('status') === 'avatar-updated')
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Berhasil!</strong> Foto profil kamu sudah diperbarui.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
+@if (session('status') === 'avatar-deleted')
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        Foto profil telah dihapus.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 <p class="text-muted small">
     Upload foto profil kamu. Format yang didukung: JPG, PNG, WebP. Maksimal 2MB.
 </p>
 
-<form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+
+<form method="post" action="{{ route('profile.avatar.update') }}" enctype="multipart/form-data">
     @csrf
     @method('patch')
 

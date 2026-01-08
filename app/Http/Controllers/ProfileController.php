@@ -150,4 +150,26 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function updateAvatar(Request $request)
+{
+    $request->validate([
+        'avatar' => ['required', 'image', 'mimes:jpg,png,webp', 'max:2048'],
+    ]);
+
+    $user = $request->user();
+
+    if ($request->hasFile('avatar')) {
+        // Hapus foto lama jika ada (biar storage gak penuh)
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+        $user->avatar = $path;
+        $user->save();
+    }
+
+    return back()->with('status', 'avatar-updated');
+}
 }

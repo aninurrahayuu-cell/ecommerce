@@ -9,7 +9,7 @@
     <div class="navbar-content">
       <ul class="pc-navbar">
         <li class="pc-item">
-          <a href="../dashboard/index.html" class="pc-link">
+          <a href="{{ route('admin.dashboard') }}" class="pc-link">
             <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
             <span class="pc-mtext">Dashboard</span>
           </a>
@@ -45,7 +45,7 @@
           <i class="ti ti-news"></i>
         </li>
         <li class="pc-item">
-          <a href="../pages/login.html" class="pc-link">
+          <a href="" class="pc-link">
             <span class="pc-micon"><i class="ti ti-lock"></i></span>
             <span class="pc-mtext">Login</span>
           </a>

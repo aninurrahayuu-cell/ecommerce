@@ -19,7 +19,7 @@ class StoreProductRequest extends FormRequest
 
     /**
      * Aturan validasi untuk data yang dikirim.
-     */
+     */ 
     public function rules(): array
     {
         return [
